@@ -1,0 +1,110 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: icanhazlb-operator
+  namespace: icanhazlb
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: icanhazlb-operator
+  namespace: icanhazlb
+rules:
+- apiGroups:
+  - service.icanhazlb.com
+  resources:
+  - icanhazlbservices
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - service.icanhazlb.com
+  resources:
+  - icanhazlbservices/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - service.icanhazlb.com
+  resources:
+  - icanhazlbservices/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - discovery.k8s.io
+  resources:
+  - endpointslices
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources: 
+  - services
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingresses
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: icanhazlb-operator-binding
+  namespace: icanhazlb
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: icanhazlb-operator
+subjects:
+- kind: ServiceAccount
+  name: icanhazlb-operator
+  namespace: icanhazlb
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: icanhazlb-operator
+  namespace: icanhazlb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: icanhazlb-operator
+  template:
+    metadata:
+      labels:
+        app: icanhazlb-operator
+    spec:
+      serviceAccountName: icanhazlb-operator
+      containers:
+        - name: icanhazlb-operator
+          image: icanhazlb-operator:latest
+          imagePullPolicy: Always
