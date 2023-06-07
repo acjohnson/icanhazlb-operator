@@ -1,12 +1,45 @@
+---
 apiVersion: service.icanhazlb.com/v1alpha1
 kind: IcanhazlbService
 metadata:
-  labels:
-    app.kubernetes.io/name: icanhazlbservice
-    app.kubernetes.io/instance: icanhazlbservice-sample
-    app.kubernetes.io/part-of: operator
-    app.kubernetes.io/managed-by: kustomize
-    app.kubernetes.io/created-by: operator
-  name: icanhazlbservice-sample
+  name: icanhazlb-example
+  namespace: default
 spec:
-  # TODO(user): Add fields here
+  endpointSlices:
+    name: icanhazlb-example-svc
+    addressType: IPv4
+    ports:
+      - name: http
+        port: 80
+    endpoints:
+      - addresses:
+        - 1.2.3.4
+    labels:
+      kubernetes.io/service-name: icanhazlb-example-svc
+  services:
+    name: icanhazlb-example-svc
+    type: ClusterIP
+    ipFamilies:
+    - IPv4
+    ports:
+      - protocol: TCP
+        port: 80
+        targetPort: 80
+    labels:
+      kubernetes.io/service-name: icanhazlb-example-svc
+  ingresses:
+    name: icanhazlb-example-ing
+    annotations:
+      nginx.ingress.kubernetes.io/upstream-vhost: example.domain.com
+    ingressClassName: nginx
+    rules:
+    - host: example.icanhazlb.com
+      http:
+        paths:
+        - path: /
+          pathType: ImplementationSpecific
+          backend:
+            service:
+              name: icanhazlb-example-svc
+              port:
+                number: 80
