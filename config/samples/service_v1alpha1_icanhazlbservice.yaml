@@ -1,0 +1,12 @@
+apiVersion: service.icanhazlb.com/v1alpha1
+kind: IcanhazlbService
+metadata:
+  labels:
+    app.kubernetes.io/name: icanhazlbservice
+    app.kubernetes.io/instance: icanhazlbservice-sample
+    app.kubernetes.io/part-of: operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: operator
+  name: icanhazlbservice-sample
+spec:
+  # TODO(user): Add fields here

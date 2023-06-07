@@ -1,0 +1,27 @@
+# permissions for end users to view icanhazlbservices.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: icanhazlbservice-viewer-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: operator
+    app.kubernetes.io/part-of: operator
+    app.kubernetes.io/managed-by: kustomize
+  name: icanhazlbservice-viewer-role
+rules:
+- apiGroups:
+  - service.icanhazlb.com
+  resources:
+  - icanhazlbservices
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - service.icanhazlb.com
+  resources:
+  - icanhazlbservices/status
+  verbs:
+  - get
